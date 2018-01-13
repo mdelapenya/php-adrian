@@ -11,13 +11,15 @@ class UsuariosDatabase {
     }
 
     function add_user($email, $password) {
+        $activation_code = $this->_generate_activation_code();
+
         $userLine = '';
 
         $userLine .= $email;
         $userLine .= '#';
         $userLine .= $password;
         $userLine .= '#';
-        $userLine .= $this->_generate_activation_code();
+        $userLine .= $activation_code;
         $userLine .= "\r\n";
 
         if (is_writable($this->path)) {
@@ -35,12 +37,14 @@ class UsuariosDatabase {
                 echo "Cannot save $email to the database";
                 exit;
             }
-        
+
             fclose($databaseFile);
         }
         else {
             echo "The file $this->path is not writable";
         }
+
+        return $activation_code;
     }
 
     function _generate_activation_code($length = 10) {
