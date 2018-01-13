@@ -25,8 +25,14 @@
                     $msg = "El email $email ya existe. Lo siento!";
                 }
                 else {
-                    $database->add_user($email, $password);
-                    $msg = "Usuario creado con éxito";
+                    $activation_code = $database->add_user($email, $password);
+
+                    include("email-sender.php");
+                    
+                    $emailSender = new EmailSender();
+
+                    $emailSender->send_activation($email, $activation_code);
+                    $msg = "Usuario creado con éxito. Se ha enviado un email a $email con el código de activación.";
                 }
             }
          ?>
