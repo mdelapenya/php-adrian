@@ -8,7 +8,7 @@ class UsuariosDatabase {
     // constructor por defecto de PHP
     function __construct() {
         if (!file_exists($this->path)) {
-            $adtabase = fopen($this->path, 'w');
+            $database = fopen($this->path, 'w');
             fclose($database);
         }
     }
