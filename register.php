@@ -10,20 +10,24 @@
         <?php
             $msg = '';
             
-            if (isset($_POST['login']) && !empty($_POST['username']) 
-               && !empty($_POST['password'])) {
-				
-               if ($_POST['email'] == 'Manu' && 
-                  $_POST['password'] == '1234') {
-                  $_SESSION['valid'] = true;
-                  $_SESSION['timeout'] = time();
-                  $_SESSION['email'] = 'Manu';
-                  
-                  echo 'You have entered valid use name and password';
-               }
-               else {
-                  $msg = 'Wrong email or password';
-               }
+            if (!empty($_POST['email']) && !empty($_POST['password'])) {
+
+                include("users-db.php");
+
+                $email = $_POST["email"];
+                $password = $_POST["password"];
+                
+                $database = new UsuariosDatabase();
+                
+                $exists = $database->email_exists($email);
+                
+                if ($exists == true) {
+                    $msg = "El email $email ya existe. Lo siento!";
+                }
+                else {
+                    $database->add_user($email, $password);
+                    $msg = "Usuario creado con éxito";
+                }
             }
          ?>
       </div> <!-- /container -->
@@ -32,7 +36,7 @@
       
          <form class = "form-signin"
                role = "form"
-               action = "<?php echo htmlspecialchars('register-check.php'); ?>"
+               action = "<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"
                method = "post">
 
             <h4 class = "form-signin-heading">
