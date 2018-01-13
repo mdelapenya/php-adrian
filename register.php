@@ -57,7 +57,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <label for="email">Password</label>
+                        <label for="password">Password</label>
                     </td>
                     <td>
                     <input type = "password" class = "form-control" 
