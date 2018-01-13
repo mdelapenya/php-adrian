@@ -36,8 +36,6 @@ class UsuariosDatabase {
                 exit;
             }
         
-            echo "Success!! saved ($email) to the database ($this->path)";
-        
             fclose($databaseFile);
         }
         else {
