@@ -1,4 +1,7 @@
 <?php 
+
+include("email-sender.php");
+
 class UsuariosDatabase { 
     var $path = '/tmp/database.txt';
 
@@ -37,14 +40,16 @@ class UsuariosDatabase {
                 echo "Cannot save $email to the database";
                 exit;
             }
+                    
+            $emailSender = new EmailSender();
+
+            $emailSender->send_activation($email, $activation_code);
 
             fclose($databaseFile);
         }
         else {
             echo "The file $this->path is not writable";
         }
-
-        return $activation_code;
     }
 
     function _generate_activation_code($length = 10) {
