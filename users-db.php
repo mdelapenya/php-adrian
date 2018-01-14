@@ -79,30 +79,33 @@ class UsuariosDatabase {
         $userLine .= $activation_code;
         $userLine .= "\n";
 
-        if (is_writable($this->path)) {
+        try {
+            if (is_writable($this->path)) {
 
-            // In our example we're opening database in append mode.
-            // The file pointer is at the bottom of the file hence
-            // that's where $userLine will go when we fwrite() it.
-            if (!$databaseFile = fopen($this->path, 'a')) {
-                 echo "Cannot open file ($this->path)";
-                 exit;
+                // In our example we're opening database in append mode.
+                // The file pointer is at the bottom of the file hence
+                // that's where $userLine will go when we fwrite() it.
+                if (!$databaseFile = fopen($this->path, 'a')) {
+                    echo "Cannot open file ($this->path)";
+                    exit;
+                }
+
+                // Write $userLine to our opened file.
+                if (fwrite($databaseFile, $userLine) === FALSE) {
+                    echo "Cannot save $email to the database";
+                    exit;
+                }
+
+                $emailSender = new EmailSender();
+
+                $emailSender->send_activation($email, $activation_code);
             }
-        
-            // Write $userLine to our opened file.
-            if (fwrite($databaseFile, $userLine) === FALSE) {
-                echo "Cannot save $email to the database";
-                exit;
+            else {
+                echo "The file $this->path is not writable";
             }
-                    
-            $emailSender = new EmailSender();
-
-            $emailSender->send_activation($email, $activation_code);
-
-            fclose($databaseFile);
         }
-        else {
-            echo "The file $this->path is not writable";
+        finally {
+            fclose($databaseFile);
         }
     }
 
