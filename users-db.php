@@ -149,13 +149,11 @@ class UsuariosDatabase {
 
             foreach ($array as &$linea) {
                 if (strpos($linea, $email) === 0) {
-                    if ($this->check_login($linea, $email, $password)) {
-                        return true; // salir del bucle al haber hecho login válido
-                    }
+                    return $this->check_login($linea, $email, $password);
                 }
             }
 
-            return false;
+            return "Login incorrecto";
         }
         finally {
             fclose($database);
@@ -168,17 +166,15 @@ class UsuariosDatabase {
         if ($email === $array[0]) {
             if ($password === $array[1]) {
                 if ("ACTIVADO" === $array[2]) {
-                    echo "<h1>Usuario Activado</h1>";
+                    return "Usuario Activado";
                 }
                 else {
-                    echo "<h1>Usuario NO activado!!</h1>";
+                    return "Usuario NO activado!!";
                 }
-
-                return true;
             }
         }
 
-        return false;
+        return "Login incorrecto";
     }
 
 } 

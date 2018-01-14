@@ -20,14 +20,7 @@
                 
                 $database = new UsuariosDatabase();
                 
-                $loginOk = $database->is_valid_login($email, $password);
-                
-                if ($loginOk) {
-                    $msg = "Login Correct";
-                }
-                else {
-                    $msg = "Login Incorrect";
-                }
+                $msg = $database->is_valid_login($email, $password);
             }
          ?>
       </div> <!-- /container -->
