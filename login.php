@@ -21,12 +21,19 @@
                 $database = new UsuariosDatabase();
                 
                 $msg = $database->is_valid_login($email, $password);
+
+                if (strcmp($msg, "Usuario Activado") === 0) {
+                    session_start();
+                }
             }
          ?>
       </div> <!-- /container -->
       
       <div class = "container">
-      
+
+        <?php
+            if (!isset($_SESSION) ) {
+        ?>      
          <form class = "form-signin"
                role = "form"
                action = "<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"
@@ -46,7 +53,12 @@
             <button class = "btn btn-lg btn-primary btn-block" type = "submit" 
                name = "login">Login</button>
          </form>
-            
+        <?php
+        }
+        else {
+            echo "<h1>Usuario: $email ha entrado en el sistema.</h1>";
+        }
+        ?>
          <a class="btn btn-primary" href="index.php" role="button">Volver al Inicio</a>
          
       </div> 
