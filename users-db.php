@@ -13,6 +13,60 @@ class UsuariosDatabase {
         }
     }
 
+    function activate_user($email, $code) {
+        try {
+            $database = fopen($this->path, 'r');
+
+            if ($database) {
+                $array = explode("\n", fread($database, filesize($this->path)));
+            }
+
+            $newContent = '';
+
+            $result = false;
+
+            foreach ($array as $linea) {
+                if (strpos($linea, $email) === 0) { // la línea comienza por el email
+                    if ($this->lineEndsWith($linea, 'ACTIVADO')) { // usuario YA activado
+                        // salimos del método sin reescribir el fichero de usuarios
+                        return "El usuario $email ya ha sido activado con anterioridad";
+                    }
+                    else if ($this->lineEndsWith($linea, $code)) { // el código coincide
+                        $linea = str_replace($code, "ACTIVADO", $linea);
+
+                        // definimos el mensaje de salida al haber encontrado el usuario y su código
+                        $result = "Usuario activado con éxito. ¡Ya puedes iniciar sesión!";
+                    }
+                    else { // en cualquier otro caso
+                        // salimos del método sin reescribir el fichero de usuarios
+                        return "El email $email no posee el código $code";
+                    }
+                }
+
+                $newContent .= $linea."\n";
+            }
+
+            fclose($database);
+
+            $database = fopen($this->path, 'w');
+
+            fwrite($database, $newContent) or die("Could not write file!");
+
+            return $result;
+        }
+        finally {
+            fclose($database);
+        }
+    }
+
+    private function lineEndsWith($cadena, $suffix) {
+        // coge desde la última aparición de '#' hasta el final, sin incluirla,
+        // quitando los espacios
+        $fin = trim(substr(strrchr($cadena, "#"), 1));
+
+        return (strcmp($fin, $suffix) === 0);
+    }
+
     function add_user($email, $password) {
         $activation_code = $this->_generate_activation_code();
 
@@ -23,7 +77,7 @@ class UsuariosDatabase {
         $userLine .= $password;
         $userLine .= '#';
         $userLine .= $activation_code;
-        $userLine .= "\r\n";
+        $userLine .= "\n";
 
         if (is_writable($this->path)) {
 
